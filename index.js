@@ -35,8 +35,7 @@ function createServer() {
     version: "1.0.0"
   });
 
-  // ─── CONTACTS ───────────────────────────────────────────────
-
+  // CONTACTS
   server.tool("search_contacts", "Search GHL contacts by name, email, or phone", {
     query: z.string().describe("Name, email, or phone to search")
   }, async ({ query }) => {
@@ -57,8 +56,7 @@ function createServer() {
     email: z.string().optional(),
     phone: z.string().optional(),
     companyName: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    customFields: z.record(z.string()).optional()
+    tags: z.array(z.string()).optional()
   }, async (params) => {
     const data = await ghlRequest("POST", `/contacts/`, { ...params, locationId: LOCATION_ID });
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -71,8 +69,7 @@ function createServer() {
     email: z.string().optional(),
     phone: z.string().optional(),
     companyName: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    customFields: z.record(z.string()).optional()
+    tags: z.array(z.string()).optional()
   }, async ({ contactId, ...params }) => {
     const data = await ghlRequest("PUT", `/contacts/${contactId}`, params);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -127,8 +124,7 @@ function createServer() {
     contactId: z.string(),
     title: z.string(),
     dueDate: z.string().describe("ISO date string"),
-    description: z.string().optional(),
-    completed: z.boolean().optional()
+    description: z.string().optional()
   }, async ({ contactId, ...params }) => {
     const data = await ghlRequest("POST", `/contacts/${contactId}/tasks`, params);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -141,8 +137,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── PIPELINES AND OPPORTUNITIES ────────────────────────────
-
+  // PIPELINES AND OPPORTUNITIES
   server.tool("get_pipelines", "Get all pipelines in GHL", {}, async () => {
     const data = await ghlRequest("GET", `/opportunities/pipelines?locationId=${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -208,8 +203,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── CONVERSATIONS AND MESSAGES ─────────────────────────────
-
+  // CONVERSATIONS AND MESSAGES
   server.tool("search_conversations", "Search GHL conversations", {
     contactId: z.string().optional(),
     query: z.string().optional()
@@ -240,10 +234,7 @@ function createServer() {
     message: z.string()
   }, async ({ contactId, message }) => {
     const data = await ghlRequest("POST", `/conversations/messages`, {
-      type: "SMS",
-      contactId,
-      message,
-      locationId: LOCATION_ID
+      type: "SMS", contactId, message, locationId: LOCATION_ID
     });
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
@@ -255,18 +246,12 @@ function createServer() {
     html: z.string().optional()
   }, async ({ contactId, subject, body, html }) => {
     const data = await ghlRequest("POST", `/conversations/messages`, {
-      type: "Email",
-      contactId,
-      subject,
-      body,
-      html: html || body,
-      locationId: LOCATION_ID
+      type: "Email", contactId, subject, body, html: html || body, locationId: LOCATION_ID
     });
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── CALENDARS AND APPOINTMENTS ─────────────────────────────
-
+  // CALENDARS AND APPOINTMENTS
   server.tool("get_calendars", "Get all calendars in GHL", {}, async () => {
     const data = await ghlRequest("GET", `/calendars/?locationId=${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -319,8 +304,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── WORKFLOWS ───────────────────────────────────────────────
-
+  // WORKFLOWS
   server.tool("get_workflows", "Get all workflows in GHL", {}, async () => {
     const data = await ghlRequest("GET", `/workflows/?locationId=${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -345,8 +329,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── CAMPAIGNS ───────────────────────────────────────────────
-
+  // CAMPAIGNS
   server.tool("get_campaigns", "Get all campaigns in GHL", {
     status: z.string().optional()
   }, async ({ status }) => {
@@ -356,8 +339,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── FORMS ───────────────────────────────────────────────────
-
+  // FORMS
   server.tool("get_forms", "Get all forms in GHL", {}, async () => {
     const data = await ghlRequest("GET", `/forms/?locationId=${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -375,8 +357,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── SURVEYS ─────────────────────────────────────────────────
-
+  // SURVEYS
   server.tool("get_surveys", "Get all surveys in GHL", {}, async () => {
     const data = await ghlRequest("GET", `/surveys/?locationId=${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -389,8 +370,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── USERS ───────────────────────────────────────────────────
-
+  // USERS
   server.tool("get_users", "Get all users in GHL location", {}, async () => {
     const data = await ghlRequest("GET", `/users/?locationId=${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -403,8 +383,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── LOCATION / SUB-ACCOUNT ──────────────────────────────────
-
+  // LOCATION
   server.tool("get_location", "Get GHL location/sub-account details", {}, async () => {
     const data = await ghlRequest("GET", `/locations/${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -425,8 +404,7 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── LINKS / FUNNELS ─────────────────────────────────────────
-
+  // FUNNELS AND WEBSITES
   server.tool("get_funnels", "Get all funnels in GHL", {}, async () => {
     const data = await ghlRequest("GET", `/funnels/funnel/list?locationId=${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -437,27 +415,31 @@ function createServer() {
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
-  // ─── MEDIA ───────────────────────────────────────────────────
-
+  // MEDIA
   server.tool("get_media_files", "Get media files in GHL", {}, async () => {
     const data = await ghlRequest("GET", `/medias/?locationId=${LOCATION_ID}`);
-    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
-  });
-
-  // ─── SNAPSHOTS ───────────────────────────────────────────────
-
-  server.tool("get_snapshots", "Get all snapshots in GHL agency", {}, async () => {
-    const data = await ghlRequest("GET", `/snapshots/?companyId=${LOCATION_ID}`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   });
 
   return server;
 }
 
-// SSE transport for MCP
+// SSE transport
 const transports = {};
 
+// Handle CORS for Claude
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, mcp-session-id");
+  if (req.method === "OPTIONS") return res.sendStatus(200);
+  next();
+});
+
 app.get("/sse", async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
   const transport = new SSEServerTransport("/messages", res);
   transports[transport.sessionId] = transport;
   res.on("close", () => delete transports[transport.sessionId]);
